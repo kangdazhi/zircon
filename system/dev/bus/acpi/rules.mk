@@ -31,6 +31,7 @@ MODULE_SRCS := \
     $(LOCAL_DIR)/dev-tbmc.cpp \
     $(LOCAL_DIR)/debug.c \
     $(LOCAL_DIR)/init.c \
+    $(LOCAL_DIR)/iommu.c \
     $(LOCAL_DIR)/pci.c \
     $(LOCAL_DIR)/power.c \
     $(LOCAL_DIR)/powerbtn.c \
