@@ -32,6 +32,7 @@ MODULE_SRCS += \
 
 MODULE_DEPS += \
 	kernel/object \
+	kernel/dev/iommu/dummy \
 	third_party/lib/fdt \
 
 KERNEL_DEFINES += \
