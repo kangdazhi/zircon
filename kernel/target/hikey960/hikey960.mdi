@@ -6,12 +6,10 @@ cpu-map = {
             name = "a53"
             cpu-count = 4
         }
-/* second cluster temporarily disabled
         {
             name = "a73"
             cpu-count = 4
         }
-*/
     }
 }
 
