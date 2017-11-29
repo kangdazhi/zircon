@@ -42,6 +42,8 @@ attr                    .req x26
 
 .section .text.boot, "ax", @progbits
 FUNCTION(arm_reset)
+    cmp    x1, #0x0
+    beq     .Lno_efi
     movlit  x9, EFI_BOOT_SIGNATURE
     ldr     x10, [x1]
     cmp     x9,x10
