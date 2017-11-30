@@ -1566,6 +1566,26 @@ static void process_suspend_list(suspend_context_t* ctx) {
     ctx->dh = dh;
 }
 
+static int suspend_timeout_thread(void* arg) {
+    // 10 seconds
+    zx_nanosleep(zx_deadline_after(ZX_SEC(10)));
+    suspend_context_t* ctx = arg;
+    if (ctx->flags == RUNNING) {
+        return 0; // success
+    }
+    log(ERROR, "devcoord: suspend time out\n");
+    log(ERROR, "  sflags: 0x%08x\n", ctx->sflags);
+    device_t* dev;
+    list_for_every_entry(&list_devices, dev, device_t, anode) {
+        pending_t* pending = list_peek_head_type(&dev->pending, pending_t, node);
+        if ((pending == NULL) || (pending->op != PENDING_SUSPEND)) {
+            continue;
+        }
+        log(ERROR, "  devhost with device '%s' timed out\n", dev->name);
+    }
+    return 0;
+}
+
 static void dc_suspend(uint32_t flags) {
     // these top level devices should all have proxies. if not,
     // the system hasn't fully initialized yet and cannot go to
@@ -1587,6 +1607,12 @@ static void dc_suspend(uint32_t flags) {
     list_initialize(&ctx->devhosts);
 
     build_suspend_list(ctx);
+
+    thrd_t t;
+    int ret = thrd_create_with_name(&t, suspend_timeout_thread, ctx, "devcoord-suspend-timeout");
+    if (ret != thrd_success) {
+        log(ERROR, "devcoord: can't create suspend timeout thread\n");
+    }
 
     ctx->dh = list_peek_head_type(&ctx->devhosts, devhost_t, snode);
     process_suspend_list(ctx);

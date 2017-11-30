@@ -513,6 +513,8 @@ static zx_protocol_device_t acpi_root_device_proto = {
 };
 
 static zx_status_t sys_device_suspend(void* ctx, uint32_t flags) {
+    for (;;) {
+    }
     switch (flags) {
     case DEVICE_SUSPEND_FLAG_REBOOT:
         reboot();
